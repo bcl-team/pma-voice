@@ -5,8 +5,6 @@ local volumes = {
 	-- people are setting this to 1 instead of 1.0 and expecting it to work.
 	['radio'] = GetConvarInt('voice_defaultRadioVolume', 60) / 100,
 	['call'] = GetConvarInt('voice_defaultCallVolume', 60) / 100,
-	['click_on'] = GetConvarInt('voice_onClickVolume', 10) / 100,
-	['click_off'] = GetConvarInt('voice_offClickVolume', 3) / 100,
 }
 
 radioEnabled, radioPressed, mode = true, false, GetConvarInt('voice_defaultVoiceMode', 2)
@@ -213,18 +211,6 @@ function addVoiceTargets(...)
 	end
 end
 
---- function playMicClicks
----plays the mic click if the player has them enabled.
----@param clickType boolean whether to play the 'on' or 'off' click.
-function playMicClicks(clickType)
-	if micClicks ~= true then return logger.verbose("Not playing mic clicks because client has them disabled") end
-	-- TODO: Add customizable radio click volumes
-	sendUIMessage({
-		sound = (clickType and "audio_on" or "audio_off"),
-		volume = (clickType and volumes['click_on'] or volumes['click_off'])
-	})
-end
-
 --- check if player is muted
 exports('isPlayerMuted', function(source)
 	return mutedPlayers[source]
@@ -251,18 +237,12 @@ exports('toggleMutePlayer', toggleMutePlayer)
 
 --- function setVoiceProperty
 --- sets the specified voice property
----@param type string what voice property you want to change (only takes 'radioEnabled' and 'micClicks')
+---@param type string what voice property you want to change (only takes 'radioEnabled')
 ---@param value any the value to set the type to.
 function setVoiceProperty(type, value)
 	if type == "radioEnabled" then
 		radioEnabled = value
 		handleRadioEnabledChanged(value)
-		sendUIMessage({
-			radioEnabled = value
-		})
-	elseif type == "micClicks" then
-		micClicks = value == true or value == "true"
-		SetResourceKvp('pma-voice_enableMicClicks', tostring(micClicks))
 	end
 end
 

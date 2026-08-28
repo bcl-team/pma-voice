@@ -30,10 +30,6 @@ function syncRadioData(radioTable, localPlyRadioName)
 		handleRadioAndCallInit()
 	end
 
-	sendUIMessage({
-		radioChannel = radioChannel,
-		radioEnabled = isEnabled
-	})
 	if GetConvarInt("voice_syncPlayerNames", 0) == 1 then
 		radioNames[playerServerId] = localPlyRadioName
 	end
@@ -52,7 +48,6 @@ function setTalkingOnRadio(plySource, enabled)
 	-- If we're on a call we don't want to toggle their voice disabled this will break calls.
 	local enabled = enabled or callData[plySource]
 	toggleVoice(plySource, enabled, 'radio')
-	playMicClicks(enabled)
 end
 RegisterNetEvent('pma-voice:setTalkingOnRadio', setTalkingOnRadio)
 
@@ -83,10 +78,6 @@ function removePlayerFromRadio(plySource)
 				toggleVoice(tgt, false, 'radio')
 			end
 		end
-		sendUIMessage({
-			radioChannel = 0,
-			radioEnabled = radioEnabled
-		})
 		radioNames = {}
 		radioData = {}
 		addVoiceTargets(callData)
@@ -197,7 +188,6 @@ RegisterCommand('+radiotalk', function()
 			TriggerServerEvent('pma-voice:setTalkingOnRadio', true)
 			radioPressed = true
 			local shouldPlayAnimation = isRadioAnimEnabled()
-			playMicClicks(true)
 			-- localize here so in the off case someone changes this while its in use we
 			-- still remove our dictionary down below here
 			local dict = radioAnim.dict
@@ -249,7 +239,6 @@ RegisterCommand('-radiotalk', function()
 		addVoiceTargets(callData)
 		TriggerEvent("pma-voice:radioActive", false)
 		LocalPlayer.state:set("radioActive", false, true);
-		playMicClicks(false)
 		if GetConvarInt('voice_enableRadioAnim', 1) == 1 then
 			StopAnimTask(PlayerPedId(), radioAnim.dict, radioAnim.anim, -4.0)
 		end
