@@ -1,0 +1,31 @@
+name: Publish resource release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Package FiveM resource
+        run: |
+          set -euo pipefail
+          mkdir -p dist/pma-voice
+          cp -R client server dist/pma-voice/
+          cp fxmanifest.lua shared.lua LICENSE README.md dist/pma-voice/
+          tar -C dist -czf pma-voice.tar.gz pma-voice
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: pma-voice.tar.gz
