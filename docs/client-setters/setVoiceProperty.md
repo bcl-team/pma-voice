@@ -2,7 +2,7 @@
 
 ## Description
 
-Sets the voice property, currently the only use is to enable/disable radios and radio clicks.
+Sets the voice property, currently used to enable or disable radios.
 
 ## Parameters
 
@@ -12,6 +12,4 @@ Sets the voice property, currently the only use is to enable/disable radios and 
 ```lua
 -- Enable the radio
 exports['pma-voice']:setVoiceProperty('radioEnabled', true)
--- Disable radio clicks
-exports['pma-voice']:setVoiceProperty('micClicks', false)
 ```
